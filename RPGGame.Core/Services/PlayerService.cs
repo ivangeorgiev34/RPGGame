@@ -4,8 +4,45 @@ namespace RPGGame.Core.Services
 {
     public class PlayerService : IPlayerService
     {
+        public void AddPointsToPlayer(int remainingPoints, int remainingPointsConsoleRowPosition, int remainingPointsConsoleColPosition)
+        {
+            var heroProperties = new string[3] { "Strenght", "Agility", "Intelligence" };
 
-        public void AddPointsToPlayerProperty(int points, string currentProperty, string[] heroProperties)
+            for (int index = 0; index < heroProperties.Length; index++)
+            {
+                if (remainingPoints == 0)
+                {
+                    return;
+                }
+
+                var currentProperty = heroProperties[index];
+
+                Console.Write($"Add to {currentProperty}: ");
+
+                var points = int.Parse(Console.ReadKey().KeyChar.ToString());
+
+                if (remainingPoints < points)
+                {
+                    //reseting the cursor position
+                    Console.SetCursorPosition(0, remainingPointsConsoleRowPosition + index + 2);
+
+                    throw new InvalidOperationException("Error: You can't add more points than you already have!");
+                }
+
+                AddPointsToPlayerProperty(points, currentProperty, heroProperties);
+
+                remainingPoints -= points;
+
+                Console.SetCursorPosition(remainingPointsConsoleColPosition, remainingPointsConsoleRowPosition);
+
+                Console.Write(remainingPoints);
+
+                //reseting the cursor position
+                Console.SetCursorPosition(0, remainingPointsConsoleRowPosition + index + 2);
+
+            }
+        }
+        private void AddPointsToPlayerProperty(int points, string currentProperty, string[] heroProperties)
         {
             if (Program.player != null)
             {
