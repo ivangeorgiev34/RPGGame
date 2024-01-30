@@ -1,19 +1,42 @@
-﻿using RPGGame.Contracts;
-using RPGGame.Enums;
-using RPGGame.Models;
+﻿using RPGGame.Contracts.Managers;
+using RPGGame.Contracts.Services;
+using RPGGame.Infrastructure.Enums;
+using RPGGame.Infrastructure.Models;
+using RPGGame.Services;
 
 namespace RPGGame
 {
-    internal class Program
+    public class Program
     {
         public static Screen currentScreen = Screen.MainMenu;
-        private static IScreenManager screenManager = new ConsoleScreenManager();
-        private static Creature? player;
+        private static IPlayerService playerService = new PlayerService();
+        private static IScreenManager screenManager = new ConsoleScreenManager(playerService);
+        public static Creature? player;
 
         static void Main(string[] args)
         {
-            screenManager.ShowMainMenu();
+            while (currentScreen != Screen.Exit)
+            {
+                screenManager.ShowMainMenu();
 
+                try
+                {
+                    screenManager.ShowCharacterSelect();
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    Console.WriteLine(ioe.Message);
+                    Console.WriteLine("Press any key to restart the game!");
+
+                    var key = Console.ReadKey(true).Key.ToString();
+
+                    if (key != "")
+                    {
+                        currentScreen = Screen.MainMenu;
+                    }
+
+                }
+            }
         }
     }
 }
