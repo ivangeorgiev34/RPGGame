@@ -10,4 +10,8 @@
     <ProjectReference Include="..\RPGGame\RPGGame.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Managers\" />
+  </ItemGroup>
+
 </Project>
