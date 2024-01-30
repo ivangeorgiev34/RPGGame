@@ -1,4 +1,4 @@
-﻿namespace RPGGame.Enums
+﻿namespace RPGGame.Infrastructure.Enums
 {
     public enum Screen
     {
