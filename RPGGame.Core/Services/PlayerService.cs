@@ -1,4 +1,5 @@
 ﻿using RPGGame.Core.Contracts;
+using RPGGame.Models;
 
 namespace RPGGame.Core.Services
 {
@@ -42,6 +43,27 @@ namespace RPGGame.Core.Services
 
             }
         }
+
+        public void AssignHeroToPlayer(char characterNumber)
+        {
+            if (characterNumber == '1')
+            {
+                Program.player = new Warrior();
+            }
+            else if (characterNumber == '2')
+            {
+                Program.player = new Archer();
+            }
+            else if (characterNumber == '3')
+            {
+                Program.player = new Mage();
+            }
+            else
+            {
+                throw new InvalidOperationException("Error: You can only choose between the numbers 1, 2, and 3");
+            }
+        }
+
         private void AddPointsToPlayerProperty(int points, string currentProperty, string[] heroProperties)
         {
             if (Program.player != null)
