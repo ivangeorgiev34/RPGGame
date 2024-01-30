@@ -1,4 +1,4 @@
-﻿namespace RPGGame.Core.Contracts
+﻿namespace RPGGame.Core.Contracts.Services
 {
     public interface IPlayerService
     {

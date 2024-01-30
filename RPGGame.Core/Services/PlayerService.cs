@@ -1,4 +1,4 @@
-﻿using RPGGame.Core.Contracts;
+﻿using RPGGame.Core.Contracts.Services;
 using RPGGame.Models;
 
 namespace RPGGame.Core.Services
