@@ -7,6 +7,8 @@ namespace RPGGame
     {
         public void ShowMainMenu()
         {
+            Console.Clear();
+
             Console.WriteLine("Welcome!");
             Console.WriteLine("Press any key to play!");
 
