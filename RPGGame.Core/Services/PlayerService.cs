@@ -11,15 +11,15 @@ namespace RPGGame.Core.Services
             {
                 if (currentProperty == heroProperties[0])
                 {
-                    Program.player.Strenght = points;
+                    Program.player.Strenght += points;
                 }
                 else if (currentProperty == heroProperties[1])
                 {
-                    Program.player.Agility = points;
+                    Program.player.Agility += points;
                 }
                 else if (currentProperty == heroProperties[2])
                 {
-                    Program.player.Intelligence = points;
+                    Program.player.Intelligence += points;
                 }
             }
         }
