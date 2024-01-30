@@ -1,4 +1,4 @@
-﻿namespace RPGGame.Core.Contracts.Managers
+﻿namespace RPGGame.Contracts.Managers
 {
     public interface IScreenManager
     {

@@ -1,10 +1,17 @@
-﻿using RPGGame.Contracts;
-using RPGGame.Enums;
+﻿
+using RPGGame.Contracts.Managers;
+using RPGGame.Contracts.Services;
+using RPGGame.Infrastructure.Enums;
 
 namespace RPGGame
 {
     public class ConsoleScreenManager : IScreenManager
     {
+        private readonly IPlayerService _playerService;
+        public ConsoleScreenManager(IPlayerService playerService)
+        {
+            this._playerService = playerService;
+        }
         public void ShowCharacterSelect()
         {
             Console.Clear();
@@ -18,10 +25,10 @@ namespace RPGGame
 
             var characterNumber = Console.ReadKey(true).KeyChar;
 
-            AssignHeroToPlayer(characterNumber);
+            _playerService.AssignHeroToPlayer(characterNumber);
 
             Console.WriteLine("Would you like to buff up your stats before starting?                    (Limit: 3 points total)");
-            Console.Write("Response (Y\\N): ");
+            Console.WriteLine("Response (Y\\N): ");
 
             var response = char.ToUpper(Console.ReadKey(true).KeyChar);
 
@@ -37,7 +44,7 @@ namespace RPGGame
                 var pointsConsoleRowPosition = Console.CursorTop - 1;
                 var pointsConsoleColPosition = Console.CursorLeft + remainingPointsText.Length - 1;
 
-                AddPointsToPlayer(remainingPoints, pointsConsoleRowPosition, pointsConsoleColPosition);
+                _playerService.AddPointsToPlayer(remainingPoints, pointsConsoleRowPosition, pointsConsoleColPosition);
             }
             else if (response != 'N')
             {

@@ -1,7 +1,7 @@
-﻿using RPGGame.Core.Contracts.Services;
-using RPGGame.Models;
+﻿using RPGGame.Contracts.Services;
+using RPGGame.Infrastructure.Models;
 
-namespace RPGGame.Core.Services
+namespace RPGGame.Services
 {
     public class PlayerService : IPlayerService
     {
