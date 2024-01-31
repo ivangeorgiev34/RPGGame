@@ -9,6 +9,9 @@ namespace RPGGame
     public class ConsoleScreenManager : IScreenManager
     {
         private readonly IPlayerService _playerService;
+        private char[,]? gamingBoard;
+        private int playerPositionRow = 0;
+        private int playerPositionCol = 0;
         public ConsoleScreenManager(IPlayerService playerService)
         {
             this._playerService = playerService;
