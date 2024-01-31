@@ -291,11 +291,18 @@ namespace RPGGame
 
         }
 
-        private void Error()
+        private void OutsidePlayingBoardError()
         {
             Console.WriteLine();
 
             throw new InvalidInputException("Error: You cannot go outside the playing board!");
+        }
+
+        private void MonsterOnDesiredSpotError()
+        {
+            Console.WriteLine();
+
+            throw new InvalidInputException("Error: You cannot land on a spot where there is a monster already there!");
         }
     }
 }
