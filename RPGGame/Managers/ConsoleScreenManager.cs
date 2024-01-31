@@ -1,5 +1,4 @@
-﻿
-using RPGGame.Contracts.Managers;
+﻿using RPGGame.Contracts.Managers;
 using RPGGame.Contracts.Services;
 using RPGGame.Infrastructure.Enums;
 using RPGGame.Infrastructure.Exceptions;
@@ -82,6 +81,10 @@ namespace RPGGame
 
             if (Program.player == null)
             {
+                Console.WriteLine();
+
+                ResetPlayerPosition();
+
                 throw new ArgumentNullException("Error: Player cannot be null");
             }
 
@@ -130,9 +133,11 @@ namespace RPGGame
                 {
                     if (actionNumber == 1)
                     {
+                        PrintMonstersInRange();
 
+                        SpawnMonster();
 
-
+                        CheckIfPlayerNeedsToBeDamaged();
                     }
                     else if (actionNumber == 2)
                     {
@@ -143,17 +148,22 @@ namespace RPGGame
                         MovePlayer(moveDirection);
 
                         SpawnMonster();
+
+                        CheckIfPlayerNeedsToBeDamaged();
                     }
 
                     Console.Clear();
                 }
                 else
                 {
+                    ResetPlayerPosition();
+
                     Console.WriteLine();
 
                     throw new InvalidInputException("Error: You can choose only between the numbers 1 and 2!");
                 }
             }
+
 
         }
 
@@ -197,7 +207,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol] == '◙')
+                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -214,7 +224,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol] == '◙')
+                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -231,7 +241,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow, playerPositionCol + Program.player.Range] == '◙')
+                        if (gamingBoard[playerPositionRow, playerPositionCol + Program.player.Range] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -248,7 +258,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow, playerPositionCol - Program.player.Range] == '◙')
+                        if (gamingBoard[playerPositionRow, playerPositionCol - Program.player.Range] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -266,7 +276,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol + Program.player.Range] == '◙')
+                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol + Program.player.Range] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -285,7 +295,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol + Program.player.Range] == '◙')
+                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol + Program.player.Range] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -304,7 +314,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol - Program.player.Range] == '◙')
+                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol - Program.player.Range] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -323,7 +333,7 @@ namespace RPGGame
                             OutsidePlayingBoardError();
                         }
 
-                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol - Program.player.Range] == '◙')
+                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol - Program.player.Range] == '■')
                         {
                             MonsterOnDesiredSpotError();
                         }
@@ -336,16 +346,46 @@ namespace RPGGame
 
                         break;
                     default:
+                        ResetPlayerPosition();
+
+                        Console.WriteLine();
+
                         throw new InvalidInputException("Error: You can only choose between W, S, D, A, E, X, Q, or Z!");
                 }
-
-
             }
 
         }
 
+        private void CheckIfPlayerNeedsToBeDamaged()
+        {
+            //checking if there are any monsters around players that can attack the player
+            for (int i = playerPositionRow - 1; i < playerPositionRow + 2; i++)
+            {
+                for (int j = playerPositionCol - 1; j < playerPositionCol + 2; j++)
+                {
+                    if (i < 0
+                    || j < 0
+                    || i > gamingBoard!.GetLength(0) - 1
+                    || j > gamingBoard!.GetLength(0) - 1
+                    || (playerPositionRow == i && playerPositionCol == j))
+                    {
+                        continue;
+                    }
+
+                    if (gamingBoard[i, j] == '■')
+                    {
+                        monsterCoordinates.TryGetValue(new MonsterCoordinates(i, j), out Monster monster);
+
+                        Program.player.Health -= monster!.Damage;
+                    }
+                }
+            }
+        }
+
         private void OutsidePlayingBoardError()
         {
+            ResetPlayerPosition();
+
             Console.WriteLine();
 
             throw new InvalidInputException("Error: You cannot go outside the playing board!");
@@ -353,9 +393,17 @@ namespace RPGGame
 
         private void MonsterOnDesiredSpotError()
         {
+            ResetPlayerPosition();
+
             Console.WriteLine();
 
             throw new InvalidInputException("Error: You cannot land on a spot where there is a monster already there!");
+        }
+
+        private void ResetPlayerPosition()
+        {
+            playerPositionRow = 0;
+            playerPositionCol = 0;
         }
 
         private void SpawnMonster()
@@ -365,6 +413,8 @@ namespace RPGGame
             var intelligence = random.Next(1, 4);
 
             var monster = new Monster(strenght, agility, intelligence);
+
+            monster.Setup();
 
             int randomRow;
             int randomCol;
@@ -376,7 +426,7 @@ namespace RPGGame
 
                 if (gamingBoard![randomRow, randomCol] == '▒')
                 {
-                    gamingBoard[randomRow, randomCol] = '3';
+                    gamingBoard[randomRow, randomCol] = monster.Symbol;
 
                     var newMonsterCoordinates = new MonsterCoordinates(randomRow, randomCol);
 
@@ -398,5 +448,96 @@ namespace RPGGame
                 }
             }
         }
+
+        private void PrintMonstersInRange()
+        {
+            var monsterChoiceDictionary = new Dictionary<int, MonsterCoordinates>();
+
+            var monsterChoicesCounter = 0;
+
+
+            //checking for monster in our range
+
+            for (int i = playerPositionRow - Program.player!.Range; i <= Program.player!.Range * 2 + 2; i++)
+            {
+                for (int j = playerPositionCol - Program.player!.Range; j <= Program.player!.Range * 2 + 2; j++)
+                {
+                    //checking if we are on our player position or outside the array
+                    if (i < 0
+                        || j < 0
+                        || i > gamingBoard!.GetLength(0) - 1
+                        || j > gamingBoard!.GetLength(0) - 1
+                        || (playerPositionRow == i && playerPositionCol == j))
+                    {
+                        continue;
+                    }
+
+                    if (gamingBoard![i, j] == '■')
+                    {
+                        monsterChoiceDictionary.Add(monsterChoicesCounter, new MonsterCoordinates(i, j));
+
+                        monsterChoicesCounter += 1;
+                    }
+                }
+            }
+
+            if (monsterChoicesCounter == 0)
+            {
+                Console.WriteLine("No available targets in your range");
+
+                return;
+            }
+
+            foreach (var key in monsterChoiceDictionary.Keys)
+            {
+                if (monsterChoiceDictionary.TryGetValue(key, out MonsterCoordinates coordinates) == true && monsterCoordinates.TryGetValue(coordinates, out Monster monster) == true)
+                {
+                    Console.WriteLine($"{key}) target with remaining blood {monster.Health}");
+                }
+                else
+                {
+                    ResetPlayerPosition();
+
+                    throw new InvalidOperationException("Error: Monster not found on the map!");
+                }
+            }
+
+            Console.Write("Which one to attack: ");
+
+            if (int.TryParse(Console.ReadKey().KeyChar.ToString(), out int indexOfMonsterToAttack) == true)
+            {
+
+                if (monsterChoiceDictionary.TryGetValue(indexOfMonsterToAttack, out MonsterCoordinates coordinates) == true && monsterCoordinates.TryGetValue(coordinates, out Monster monster) == true)
+                {
+                    monster.Health -= Program.player!.Damage;
+
+                    if (monster.Health <= 0)
+                    {
+                        gamingBoard![coordinates.Row, coordinates.Column] = '▒';
+
+                        monsterCoordinates.Remove(coordinates);
+                    }
+                }
+                else
+                {
+                    ResetPlayerPosition();
+
+                    Console.WriteLine();
+
+                    throw new InvalidOperationException("Error: Monster not found on the map!");
+                }
+            }
+            else
+            {
+                ResetPlayerPosition();
+
+                Console.WriteLine();
+
+                throw new InvalidInputException($"You can only choose between ${string.Join(", ", monsterChoiceDictionary.Keys)}");
+            }
+
+
+        }
+
     }
 }
