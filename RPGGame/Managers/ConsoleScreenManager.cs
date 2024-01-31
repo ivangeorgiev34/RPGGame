@@ -2,6 +2,7 @@
 using RPGGame.Contracts.Managers;
 using RPGGame.Contracts.Services;
 using RPGGame.Infrastructure.Enums;
+using RPGGame.Infrastructure.Exceptions;
 
 namespace RPGGame
 {
@@ -48,7 +49,7 @@ namespace RPGGame
             }
             else if (response != 'N')
             {
-                throw new InvalidOperationException("Error: You cannot type symbols that are different than Y or N!");
+                throw new InvalidInputException("Error: You cannot type symbols that are different than Y or N!");
             }
         }
 
