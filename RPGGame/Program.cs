@@ -19,7 +19,6 @@ namespace RPGGame
             while (currentScreen != Screen.Exit)
             {
                 screenManager.ShowMainMenu();
-
                 try
                 {
                     screenManager.ShowCharacterSelect();
@@ -42,6 +41,19 @@ namespace RPGGame
                 catch (ArgumentNullException exc)
                 {
                     Console.WriteLine(exc.Message);
+                    Console.WriteLine("Press any key to restart the game!");
+
+                    var key = Console.ReadKey(true).Key.ToString();
+
+                    if (key != "")
+                    {
+                        currentScreen = Screen.MainMenu;
+                    }
+
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    Console.WriteLine(ioe.Message);
                     Console.WriteLine("Press any key to restart the game!");
 
                     var key = Console.ReadKey(true).Key.ToString();
