@@ -85,6 +85,8 @@ namespace RPGGame
 
                 ResetPlayerPosition();
 
+                ResetMonsters();
+
                 throw new ArgumentNullException("Error: Player cannot be null");
             }
 
@@ -131,6 +133,8 @@ namespace RPGGame
                 if (int.TryParse(Console.ReadKey().KeyChar.ToString(), out int actionNumber) == true
                     && (actionNumber == 1 || actionNumber == 2))
                 {
+                    Console.WriteLine();
+
                     if (actionNumber == 1)
                     {
                         PrintMonstersInRange();
@@ -158,13 +162,19 @@ namespace RPGGame
                 {
                     ResetPlayerPosition();
 
+                    ResetMonsters();
+
                     Console.WriteLine();
 
                     throw new InvalidInputException("Error: You can choose only between the numbers 1 and 2!");
                 }
             }
 
+            ResetPlayerPosition();
 
+            ResetMonsters();
+
+            Program.currentScreen = Screen.Exit;
         }
 
         public void ShowMainMenu()
@@ -348,6 +358,8 @@ namespace RPGGame
                     default:
                         ResetPlayerPosition();
 
+                        ResetMonsters();
+
                         Console.WriteLine();
 
                         throw new InvalidInputException("Error: You can only choose between W, S, D, A, E, X, Q, or Z!");
@@ -395,6 +407,8 @@ namespace RPGGame
         {
             ResetPlayerPosition();
 
+            ResetMonsters();
+
             Console.WriteLine();
 
             throw new InvalidInputException("Error: You cannot go outside the playing board!");
@@ -403,6 +417,8 @@ namespace RPGGame
         private void MonsterOnDesiredSpotError()
         {
             ResetPlayerPosition();
+
+            ResetMonsters();
 
             Console.WriteLine();
 
@@ -413,6 +429,11 @@ namespace RPGGame
         {
             playerPositionRow = 0;
             playerPositionCol = 0;
+        }
+
+        private void ResetMonsters()
+        {
+            monsterCoordinates.Clear();
         }
 
         private void SpawnMonster()
@@ -510,6 +531,8 @@ namespace RPGGame
                 {
                     ResetPlayerPosition();
 
+                    ResetMonsters();
+
                     throw new InvalidOperationException("Error: Monster not found on the map!");
                 }
             }
@@ -534,6 +557,8 @@ namespace RPGGame
                 {
                     ResetPlayerPosition();
 
+                    ResetMonsters();
+
                     Console.WriteLine();
 
                     throw new InvalidOperationException("Error: Monster not found on the map!");
@@ -543,6 +568,8 @@ namespace RPGGame
             {
                 ResetPlayerPosition();
 
+                ResetMonsters();
+
                 Console.WriteLine();
 
                 throw new InvalidInputException($"You can only choose between ${string.Join(", ", monsterChoiceDictionary.Keys)}");
@@ -551,6 +578,74 @@ namespace RPGGame
 
         }
 
+        private void MoveMonster(MonsterCoordinates currentMonsterCoordinates, string dimension, char operation)
+        {
+            if (dimension == "Row")
+            {
+                if (operation == '+')
+                {
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
+
+                    monsterCoordinates.Remove(currentMonsterCoordinates);
+
+                    currentMonsterCoordinates.Row += 1;
+
+                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
+
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+
+                }
+                else if (operation == '-')
+                {
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
+
+                    monsterCoordinates.Remove(currentMonsterCoordinates);
+
+                    currentMonsterCoordinates.Row -= 1;
+
+                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
+
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                }
+            }
+            else if (dimension == "Column")
+            {
+                if (operation == '+')
+                {
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
+
+                    monsterCoordinates.Remove(currentMonsterCoordinates);
+
+                    currentMonsterCoordinates.Column += 1;
+
+                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
+
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+
+                }
+                else if (operation == '-')
+                {
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
+
+                    monsterCoordinates.Remove(currentMonsterCoordinates);
+
+                    currentMonsterCoordinates.Column -= 1;
+
+                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
+
+                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                }
+            }
+
+        }
         private void MoveMonsters(IList<MonsterCoordinates> monstersDamagedPlayerCoordinates)
         {
             var movingMonsters = monsterCoordinates.Keys
@@ -567,39 +662,23 @@ namespace RPGGame
                 {
                     if (currentMonsterCoordinates.Row < playerPositionRow)
                     {
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                        currentMonsterCoordinates.Row += 1;
-
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                        MoveMonster(currentMonsterCoordinates, "Row", '+');
 
                     }
                     else if (currentMonsterCoordinates.Row > playerPositionRow)
                     {
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                        currentMonsterCoordinates.Row -= 1;
-
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                        MoveMonster(currentMonsterCoordinates, "Row", '-');
                     }
                 }
                 else if (currentMonsterCoordinates.Column != playerPositionCol)
                 {
                     if (currentMonsterCoordinates.Column < playerPositionCol)
                     {
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                        currentMonsterCoordinates.Column += 1;
-
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                        MoveMonster(currentMonsterCoordinates, "Column", '+');
                     }
                     else if (currentMonsterCoordinates.Column > playerPositionCol)
                     {
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                        currentMonsterCoordinates.Column -= 1;
-
-                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                        MoveMonster(currentMonsterCoordinates, "Column", '-');
                     }
                 }
             }
