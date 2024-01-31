@@ -65,6 +65,8 @@ namespace RPGGame
 
                 }
             }
+
+            Console.WriteLine("Game over!");
         }
     }
 }
