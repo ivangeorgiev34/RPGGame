@@ -3,6 +3,8 @@ using RPGGame.Contracts.Managers;
 using RPGGame.Contracts.Services;
 using RPGGame.Infrastructure.Enums;
 using RPGGame.Infrastructure.Exceptions;
+using RPGGame.Infrastructure.Models;
+using RPGGame.Infrastructure.Structs;
 
 namespace RPGGame
 {
@@ -14,6 +16,7 @@ namespace RPGGame
         private int playerPositionCol = 0;
         private Dictionary<MonsterCoordinates, Monster> monsterCoordinates = new Dictionary<MonsterCoordinates, Monster>();
         private Random random = new Random();
+
         public ConsoleScreenManager(IPlayerService playerService)
         {
             this._playerService = playerService;
@@ -128,6 +131,8 @@ namespace RPGGame
                     if (actionNumber == 1)
                     {
 
+
+
                     }
                     else if (actionNumber == 2)
                     {
@@ -136,13 +141,17 @@ namespace RPGGame
                         var moveDirection = char.ToUpper(Console.ReadKey().KeyChar);
 
                         MovePlayer(moveDirection);
+
+                        SpawnMonster();
                     }
 
                     Console.Clear();
                 }
                 else
                 {
-                    Error();
+                    Console.WriteLine();
+
+                    throw new InvalidInputException("Error: You can choose only between the numbers 1 and 2!");
                 }
             }
 
@@ -177,118 +186,160 @@ namespace RPGGame
 
         private void MovePlayer(char moveDirection)
         {
-            if (gamingBoard != null)
+            if (gamingBoard != null && Program.player != null)
             {
                 switch (moveDirection)
                 {
                     case 'W':
 
-                        if (playerPositionRow - 1 < 0)
+                        if (playerPositionRow - Program.player.Range < 0)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow - 1, playerPositionCol] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol] = Program.player!.Symbol;
 
-                        playerPositionRow -= 1;
+                        playerPositionRow -= Program.player.Range;
 
                         break;
                     case 'S':
-                        if (playerPositionRow + 1 > gamingBoard.GetLength(0) - 1)
+                        if (playerPositionRow + Program.player.Range > gamingBoard.GetLength(0) - 1)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow + 1, playerPositionCol] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol] = Program.player!.Symbol;
 
-                        playerPositionRow += 1;
+                        playerPositionRow += Program.player.Range;
 
                         break;
                     case 'D':
-                        if (playerPositionCol + 1 > gamingBoard.GetLength(0) - 1)
+                        if (playerPositionCol + Program.player.Range > gamingBoard.GetLength(0) - 1)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow, playerPositionCol + Program.player.Range] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow, playerPositionCol + 1] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow, playerPositionCol + Program.player.Range] = Program.player!.Symbol;
 
-                        playerPositionCol += 1;
+                        playerPositionCol += Program.player.Range;
 
                         break;
                     case 'A':
-                        if (playerPositionCol - 1 < 0)
+                        if (playerPositionCol - Program.player.Range < 0)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow, playerPositionCol - Program.player.Range] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow, playerPositionCol - 1] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow, playerPositionCol - Program.player.Range] = Program.player!.Symbol;
 
-                        playerPositionCol -= 1;
+                        playerPositionCol -= Program.player.Range;
 
                         break;
                     case 'E':
-                        if (playerPositionCol + 1 > gamingBoard.GetLength(0) - 1
-                            || playerPositionRow - 1 < 0)
+                        if (playerPositionCol + Program.player.Range > gamingBoard.GetLength(0) - 1
+                            || playerPositionRow - Program.player.Range < 0)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol + Program.player.Range] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow - 1, playerPositionCol + 1] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol + Program.player.Range] = Program.player!.Symbol;
 
-                        playerPositionCol += 1;
-                        playerPositionRow -= 1;
+                        playerPositionCol += Program.player.Range;
+                        playerPositionRow -= Program.player.Range;
 
                         break;
                     case 'X':
-                        if (playerPositionCol + 1 > gamingBoard.GetLength(0) - 1
-                            || playerPositionRow + 1 > gamingBoard.GetLength(0) - 1)
+                        if (playerPositionCol + Program.player.Range > gamingBoard.GetLength(0) - 1
+                            || playerPositionRow + Program.player.Range > gamingBoard.GetLength(0) - 1)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol + Program.player.Range] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow + 1, playerPositionCol + 1] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol + Program.player.Range] = Program.player!.Symbol;
 
-                        playerPositionCol += 1;
-                        playerPositionRow += 1;
+                        playerPositionCol += Program.player.Range;
+                        playerPositionRow += Program.player.Range;
 
                         break;
                     case 'Q':
-                        if (playerPositionCol - 1 < 0
-                            || playerPositionRow - 1 < 0)
+                        if (playerPositionCol - Program.player.Range < 0
+                            || playerPositionRow - Program.player.Range < 0)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol - Program.player.Range] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow - 1, playerPositionCol - 1] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow - Program.player.Range, playerPositionCol - Program.player.Range] = Program.player!.Symbol;
 
-                        playerPositionCol -= 1;
-                        playerPositionRow -= 1;
+                        playerPositionCol -= Program.player.Range;
+                        playerPositionRow -= Program.player.Range;
 
                         break;
                     case 'Z':
-                        if (playerPositionCol - 1 < 0
-                            || playerPositionRow + 1 > gamingBoard.GetLength(0) - 1)
+                        if (playerPositionCol - Program.player.Range < 0
+                            || playerPositionRow + Program.player.Range > gamingBoard.GetLength(0) - 1)
                         {
-                            Error();
+                            OutsidePlayingBoardError();
+                        }
+
+                        if (gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol - Program.player.Range] == '◙')
+                        {
+                            MonsterOnDesiredSpotError();
                         }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
-                        gamingBoard[playerPositionRow + 1, playerPositionCol - 1] = Program.player!.Symbol;
+                        gamingBoard[playerPositionRow + Program.player.Range, playerPositionCol - Program.player.Range] = Program.player!.Symbol;
 
-                        playerPositionCol -= 1;
-                        playerPositionRow += 1;
+                        playerPositionCol -= Program.player.Range;
+                        playerPositionRow += Program.player.Range;
 
                         break;
                     default:
                         throw new InvalidInputException("Error: You can only choose between W, S, D, A, E, X, Q, or Z!");
                 }
+
+
             }
 
         }
@@ -305,6 +356,47 @@ namespace RPGGame
             Console.WriteLine();
 
             throw new InvalidInputException("Error: You cannot land on a spot where there is a monster already there!");
+        }
+
+        private void SpawnMonster()
+        {
+            var strenght = random.Next(1, 4);
+            var agility = random.Next(1, 4);
+            var intelligence = random.Next(1, 4);
+
+            var monster = new Monster(strenght, agility, intelligence);
+
+            int randomRow;
+            int randomCol;
+
+            while (true)
+            {
+                randomRow = random.Next(0, 10);
+                randomCol = random.Next(0, 10);
+
+                if (gamingBoard![randomRow, randomCol] == '▒')
+                {
+                    gamingBoard[randomRow, randomCol] = '3';
+
+                    var newMonsterCoordinates = new MonsterCoordinates(randomRow, randomCol);
+
+                    monsterCoordinates.Add(newMonsterCoordinates, monster);
+
+                    if (randomRow + 1 == playerPositionRow
+                        || randomRow - 1 == playerPositionRow
+                        || randomCol + 1 == playerPositionCol
+                        || randomRow - 1 == playerPositionCol
+                        || (randomRow + 1 == playerPositionRow && randomCol - 1 == randomCol)
+                        || (randomRow + 1 == playerPositionRow && randomCol + 1 == randomCol)
+                        || (randomRow - 1 == playerPositionRow && randomCol - 1 == randomCol)
+                        || (randomRow - 1 == playerPositionRow && randomCol + 1 == randomCol))
+                    {
+                        Program.player!.Health -= monster.Damage;
+                    }
+
+                    break;
+                }
+            }
         }
     }
 }
