@@ -37,6 +37,19 @@ namespace RPGGame
                     }
 
                 }
+                catch (ArgumentNullException exc)
+                {
+                    Console.WriteLine(exc.Message);
+                    Console.WriteLine("Press any key to restart the game!");
+
+                    var key = Console.ReadKey(true).Key.ToString();
+
+                    if (key != "")
+                    {
+                        currentScreen = Screen.MainMenu;
+                    }
+
+                }
             }
         }
     }
