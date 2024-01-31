@@ -13,7 +13,7 @@ namespace RPGGame
         {
             this._playerService = playerService;
         }
-        public void ShowCharacterSelect()
+        public async void ShowCharacterSelect()
         {
             Console.Clear();
 
@@ -46,6 +46,10 @@ namespace RPGGame
                 var pointsConsoleColPosition = Console.CursorLeft + remainingPointsText.Length - 1;
 
                 _playerService.AddPointsToPlayer(remainingPoints, pointsConsoleRowPosition, pointsConsoleColPosition);
+
+                await _playerService.SavePlayerToDatabaseAsync();
+
+                Program.currentScreen = Screen.InGame;
             }
             else if (response != 'N')
             {
