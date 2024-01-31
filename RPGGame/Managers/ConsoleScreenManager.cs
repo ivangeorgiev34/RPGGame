@@ -87,5 +87,129 @@ namespace RPGGame
             }
         }
 
+        private void Move(char moveDirection)
+        {
+            if (gamingBoard != null)
+            {
+                switch (moveDirection)
+                {
+                    case 'W':
+
+                        if (playerPositionRow - 1 < 0)
+                        {
+                            Error();
+                        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow - 1, playerPositionCol] = Program.player!.Symbol;
+
+                        playerPositionRow -= 1;
+
+                        break;
+                    case 'S':
+                        if (playerPositionRow + 1 > gamingBoard.GetLength(0) - 1)
+                        {
+                            Error();
+                        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow + 1, playerPositionCol] = Program.player!.Symbol;
+
+                        playerPositionRow += 1;
+
+                        break;
+                    case 'D':
+                        if (playerPositionCol + 1 > gamingBoard.GetLength(0) - 1)
+                        {
+                            Error();
+        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow, playerPositionCol + 1] = Program.player!.Symbol;
+
+                        playerPositionCol += 1;
+
+                        break;
+                    case 'A':
+                        if (playerPositionCol - 1 < 0)
+                        {
+                            Error();
+                        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow, playerPositionCol - 1] = Program.player!.Symbol;
+
+                        playerPositionCol -= 1;
+
+                        break;
+                    case 'E':
+                        if (playerPositionCol + 1 > gamingBoard.GetLength(0) - 1
+                            || playerPositionRow - 1 < 0)
+                        {
+                            Error();
+                        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow - 1, playerPositionCol + 1] = Program.player!.Symbol;
+
+                        playerPositionCol += 1;
+                        playerPositionRow -= 1;
+
+                        break;
+                    case 'X':
+                        if (playerPositionCol + 1 > gamingBoard.GetLength(0) - 1
+                            || playerPositionRow + 1 > gamingBoard.GetLength(0) - 1)
+                        {
+                            Error();
+                        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow + 1, playerPositionCol + 1] = Program.player!.Symbol;
+
+                        playerPositionCol += 1;
+                        playerPositionRow += 1;
+
+                        break;
+                    case 'Q':
+                        if (playerPositionCol - 1 < 0
+                            || playerPositionRow - 1 < 0)
+                        {
+                            Error();
+                        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow - 1, playerPositionCol - 1] = Program.player!.Symbol;
+
+                        playerPositionCol -= 1;
+                        playerPositionRow -= 1;
+
+                        break;
+                    case 'Z':
+                        if (playerPositionCol - 1 < 0
+                            || playerPositionRow + 1 > gamingBoard.GetLength(0) - 1)
+                        {
+                            Error();
+                        }
+
+                        gamingBoard[playerPositionRow, playerPositionCol] = '▒';
+                        gamingBoard[playerPositionRow + 1, playerPositionCol - 1] = Program.player!.Symbol;
+
+                        playerPositionCol -= 1;
+                        playerPositionRow += 1;
+
+                        break;
+                    default:
+                        throw new InvalidInputException("Error: You can only choose between W, S, D, A, E, X, Q, or Z!");
+                }
+            }
+
+        }
+
+        private void Error()
+        {
+            Console.WriteLine();
+
+            throw new InvalidInputException("Error: You cannot go outside the playing board!");
+        }
     }
 }
