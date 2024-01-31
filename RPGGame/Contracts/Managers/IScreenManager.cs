@@ -5,5 +5,7 @@
         public void ShowMainMenu();
 
         public void ShowCharacterSelect();
+
+        public void ShowInGame();
     }
 }
