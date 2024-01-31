@@ -484,6 +484,9 @@ namespace RPGGame
             if (monsterChoicesCounter == 0)
             {
                 Console.WriteLine("No available targets in your range");
+                Console.WriteLine("Press any key to continue with your next move!");
+
+                Console.ReadKey(true);
 
                 return;
             }
@@ -536,6 +539,11 @@ namespace RPGGame
                 throw new InvalidInputException($"You can only choose between ${string.Join(", ", monsterChoiceDictionary.Keys)}");
             }
 
+
+        }
+
+        private void MoveAllMonsters()
+        {
 
         }
 
