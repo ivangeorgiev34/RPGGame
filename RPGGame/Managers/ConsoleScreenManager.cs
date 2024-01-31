@@ -358,6 +358,9 @@ namespace RPGGame
 
         private void CheckIfPlayerNeedsToBeDamaged()
         {
+
+            IList<MonsterCoordinates> monstersDamagedPlayerCoordinates = new List<MonsterCoordinates>();
+
             //checking if there are any monsters around players that can attack the player
             for (int i = playerPositionRow - 1; i < playerPositionRow + 2; i++)
             {
@@ -374,12 +377,18 @@ namespace RPGGame
 
                     if (gamingBoard[i, j] == '■')
                     {
-                        monsterCoordinates.TryGetValue(new MonsterCoordinates(i, j), out Monster monster);
+                        var monsterThatShouldDamageCoordinates = new MonsterCoordinates(i, j);
+
+                        monsterCoordinates.TryGetValue(monsterThatShouldDamageCoordinates, out Monster monster);
 
                         Program.player.Health -= monster!.Damage;
+
+                        monstersDamagedPlayerCoordinates.Add(monsterThatShouldDamageCoordinates);
                     }
                 }
             }
+
+            MoveMonsters(monstersDamagedPlayerCoordinates);
         }
 
         private void OutsidePlayingBoardError()
@@ -542,9 +551,58 @@ namespace RPGGame
 
         }
 
-        private void MoveAllMonsters()
+        private void MoveMonsters(IList<MonsterCoordinates> monstersDamagedPlayerCoordinates)
         {
+            var movingMonsters = monsterCoordinates.Keys
+                .Where(m => monstersDamagedPlayerCoordinates.Any(mc => mc.Equals(m)) == false)
+                .ToList();
 
+            MonsterCoordinates currentMonsterCoordinates;
+
+            for (int i = 0; i < movingMonsters.Count; i++)
+            {
+                currentMonsterCoordinates = movingMonsters[i];
+
+                if (currentMonsterCoordinates.Row != playerPositionRow)
+                {
+                    if (currentMonsterCoordinates.Row < playerPositionRow)
+                    {
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                        currentMonsterCoordinates.Row += 1;
+
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+
+                    }
+                    else if (currentMonsterCoordinates.Row > playerPositionRow)
+                    {
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                        currentMonsterCoordinates.Row -= 1;
+
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                    }
+                }
+                else if (currentMonsterCoordinates.Column != playerPositionCol)
+                {
+                    if (currentMonsterCoordinates.Column < playerPositionCol)
+                    {
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                        currentMonsterCoordinates.Column += 1;
+
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                    }
+                    else if (currentMonsterCoordinates.Column > playerPositionCol)
+                    {
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
+
+                        currentMonsterCoordinates.Column -= 1;
+
+                        gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
+                    }
+                }
+            }
         }
 
     }
