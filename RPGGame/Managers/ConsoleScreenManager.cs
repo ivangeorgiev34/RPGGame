@@ -50,14 +50,100 @@ namespace RPGGame
 
                 _playerService.AddPointsToPlayer(remainingPoints, pointsConsoleRowPosition, pointsConsoleColPosition);
 
+                Program.player?.Setup();
+
                 await _playerService.SavePlayerToDatabaseAsync();
 
                 Program.currentScreen = Screen.InGame;
+            }
+            else if (response == 'N')
+            {
+                Program.player?.Setup();
+
+                await _playerService.SavePlayerToDatabaseAsync();
+
+                Program.currentScreen = Screen.InGame;
+
             }
             else if (response != 'N')
             {
                 throw new InvalidInputException("Error: You cannot type symbols that are different than Y or N!");
             }
+        }
+
+        public void ShowInGame()
+        {
+            Console.Clear();
+
+            if (Program.player == null)
+            {
+                throw new ArgumentNullException("Error: Player cannot be null");
+            }
+
+            gamingBoard = new char[10, 10];
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if (i == 0 && j == 0)
+                    {
+                        gamingBoard[i, j] = Program.player.Symbol;
+
+                        continue;
+                    }
+
+                    gamingBoard[i, j] = '▒';
+                }
+            }
+
+            string statsText;
+            int healthConsoleRowPosition;
+            int manaConsoleRowPosition;
+
+            while (Program.player.Health > 0)
+            {
+                statsText = $"Health: {Program.player.Health} Mana: {Program.player.Mana}";
+
+                Console.WriteLine(statsText);
+
+                //getting the location of the health and mana numbers on the console
+                healthConsoleRowPosition = statsText.IndexOf(Program.player.Health.ToString()) + 1;
+
+                manaConsoleRowPosition = statsText.IndexOf(Program.player.Mana.ToString()) + 1;
+
+                Console.WriteLine();
+
+                PrintGamingBoard(gamingBoard);
+
+                Console.WriteLine("Choose action");
+                Console.WriteLine("1) Attack");
+                Console.WriteLine("2) Move");
+
+                if (int.TryParse(Console.ReadKey().KeyChar.ToString(), out int actionNumber) == true
+                    && (actionNumber == 1 || actionNumber == 2))
+                {
+                    if (actionNumber == 1)
+                    {
+
+                    }
+                    else if (actionNumber == 2)
+                    {
+                        Console.WriteLine("Direction to move: ");
+
+                        var moveDirection = char.ToUpper(Console.ReadKey().KeyChar);
+
+                        MovePlayer(moveDirection);
+                    }
+
+                    Console.Clear();
+                }
+                else
+                {
+                    Error();
+                }
+            }
+
         }
 
         public void ShowMainMenu()
@@ -87,7 +173,7 @@ namespace RPGGame
             }
         }
 
-        private void Move(char moveDirection)
+        private void MovePlayer(char moveDirection)
         {
             if (gamingBoard != null)
             {
@@ -122,7 +208,7 @@ namespace RPGGame
                         if (playerPositionCol + 1 > gamingBoard.GetLength(0) - 1)
                         {
                             Error();
-        }
+                        }
 
                         gamingBoard[playerPositionRow, playerPositionCol] = '▒';
                         gamingBoard[playerPositionRow, playerPositionCol + 1] = Program.player!.Symbol;
