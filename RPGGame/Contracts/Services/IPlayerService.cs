@@ -5,5 +5,7 @@
         public void AddPointsToPlayer(int remainingPoints, int remainingPointsConsoleRowPosition, int remainingPointsConsoleColPosition);
 
         public void AssignHeroToPlayer(char characterNumber);
+
+        public Task SavePlayerToDatabaseAsync();
     }
 }
