@@ -57,6 +57,6 @@
 
         public override int Range { get; set; } = 1;
 
-        public override char Symbol => '◙';
+        public override char Symbol => '■';
     }
 }
