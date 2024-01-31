@@ -23,6 +23,8 @@ namespace RPGGame
                 try
                 {
                     screenManager.ShowCharacterSelect();
+
+                    screenManager.ShowInGame();
                 }
                 catch (InvalidInputException ioe)
                 {
