@@ -61,7 +61,7 @@ namespace RPGGame.Services
             }
             else
             {
-                throw new InvalidOperationException("Error: You can only choose between the numbers 1, 2, and 3");
+                throw new InvalidInputException("Error: You can only choose between the numbers 1, 2, and 3");
             }
         }
 
