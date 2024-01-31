@@ -1,4 +1,5 @@
 ﻿using RPGGame.Contracts.Services;
+using RPGGame.Infrastructure.Exceptions;
 using RPGGame.Infrastructure.Models;
 
 namespace RPGGame.Services
@@ -27,7 +28,7 @@ namespace RPGGame.Services
                     //reseting the cursor position
                     Console.SetCursorPosition(0, remainingPointsConsoleRowPosition + index + 2);
 
-                    throw new InvalidOperationException("Error: You can't add more points than you already have!");
+                    throw new InvalidInputException("Error: You can't add more points than you already have!");
                 }
 
                 AddPointsToPlayerProperty(points, currentProperty, heroProperties);
