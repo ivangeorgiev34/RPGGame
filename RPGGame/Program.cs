@@ -1,6 +1,7 @@
 ﻿using RPGGame.Contracts.Managers;
 using RPGGame.Contracts.Services;
 using RPGGame.Infrastructure.Enums;
+using RPGGame.Infrastructure.Exceptions;
 using RPGGame.Infrastructure.Models;
 using RPGGame.Services;
 
@@ -23,7 +24,7 @@ namespace RPGGame
                 {
                     screenManager.ShowCharacterSelect();
                 }
-                catch (InvalidOperationException ioe)
+                catch (InvalidInputException ioe)
                 {
                     Console.WriteLine(ioe.Message);
                     Console.WriteLine("Press any key to restart the game!");
