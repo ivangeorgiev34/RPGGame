@@ -1,4 +1,5 @@
 ﻿using RPGGame.Contracts.Services;
+using RPGGame.Infrastructure.Data;
 using RPGGame.Infrastructure.Exceptions;
 using RPGGame.Infrastructure.Models;
 
@@ -62,6 +63,36 @@ namespace RPGGame.Services
             else
             {
                 throw new InvalidInputException("Error: You can only choose between the numbers 1, 2, and 3");
+            }
+        }
+
+        public async Task SavePlayerToDatabaseAsync()
+        {
+            using (var dbContext = new RPGGameDbContext())
+            {
+                if (Program.player == null)
+                {
+                    throw new ArgumentNullException("Error: Player cannot be null");
+                }
+
+                var player = new Player()
+                {
+                    Name = Program.player.GetType().Name,
+                    Health = Program.player.Health,
+                    Agility = Program.player.Agility,
+                    Intelligence = Program.player.Intelligence,
+                    Strenght = Program.player.Strenght,
+                    Mana = Program.player.Mana,
+                    Damage = Program.player.Damage,
+                    Range = Program.player.Range,
+                    DateCreated = DateTime.Now
+                };
+
+                dbContext.Players?.Add(player);
+
+                await dbContext.SaveChangesAsync();
+
+                await dbContext.DisposeAsync();
             }
         }
 
