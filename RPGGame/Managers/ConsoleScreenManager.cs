@@ -12,6 +12,8 @@ namespace RPGGame
         private char[,]? gamingBoard;
         private int playerPositionRow = 0;
         private int playerPositionCol = 0;
+        private Dictionary<MonsterCoordinates, Monster> monsterCoordinates = new Dictionary<MonsterCoordinates, Monster>();
+        private Random random = new Random();
         public ConsoleScreenManager(IPlayerService playerService)
         {
             this._playerService = playerService;
