@@ -25,33 +25,10 @@ namespace RPGGame
 
                     screenManager.ShowInGame();
                 }
-                catch (InvalidInputException ioe)
-                {
-                    Console.WriteLine(ioe.Message);
-                    Console.WriteLine("Press any key to restart the game!");
-
-                    var key = Console.ReadKey(true).Key.ToString();
-
-                    if (key != "")
-                    {
-                        currentScreen = Screen.MainMenu;
-                    }
-
-                }
-                catch (ArgumentNullException exc)
-                {
-                    Console.WriteLine(exc.Message);
-                    Console.WriteLine("Press any key to restart the game!");
-
-                    var key = Console.ReadKey(true).Key.ToString();
-
-                    if (key != "")
-                    {
-                        currentScreen = Screen.MainMenu;
-                    }
-
-                }
-                catch (InvalidOperationException ioe)
+                catch (Exception ioe)
+                when (ioe is ArgumentException
+                || ioe is InvalidOperationException
+                || ioe is InvalidInputException)
                 {
                     Console.WriteLine(ioe.Message);
                     Console.WriteLine("Press any key to restart the game!");
