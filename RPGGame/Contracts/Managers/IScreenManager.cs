@@ -7,5 +7,7 @@
         public void ShowCharacterSelect();
 
         public void ShowInGame();
+
+        public void ResetPlayerPosition();
     }
 }
