@@ -6,6 +6,6 @@
 
         public void AssignHeroToPlayer(char characterNumber);
 
-        public Task SavePlayerToDatabaseAsync();
+        public void SavePlayerToDatabase();
     }
 }
