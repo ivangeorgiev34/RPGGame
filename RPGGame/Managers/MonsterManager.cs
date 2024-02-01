@@ -52,15 +52,15 @@ namespace RPGGame.Managers
 
         public void MoveMonster(MonsterCoordinates currentMonsterCoordinates, string dimension, char operation, char[,]? gamingBoard, Dictionary<MonsterCoordinates, Monster> monsterCoordinates)
         {
+            monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
+
+            monsterCoordinates.Remove(currentMonsterCoordinates);
+
             if (dimension == "Row")
             {
                 if (operation == '+')
                 {
                     gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
 
                     currentMonsterCoordinates.Row += 1;
 
@@ -72,10 +72,6 @@ namespace RPGGame.Managers
                 else if (operation == '-')
                 {
                     gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
 
                     currentMonsterCoordinates.Row -= 1;
 
@@ -90,10 +86,6 @@ namespace RPGGame.Managers
                 {
                     gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
 
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
-
                     currentMonsterCoordinates.Column += 1;
 
                     monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
@@ -104,10 +96,6 @@ namespace RPGGame.Managers
                 else if (operation == '-')
                 {
                     gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
 
                     currentMonsterCoordinates.Column -= 1;
 
