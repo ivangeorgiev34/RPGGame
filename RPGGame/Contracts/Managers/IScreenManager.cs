@@ -11,5 +11,7 @@
         public void ResetPlayerPosition();
 
         public void ResetMonsters();
+
+        public void OutsidePlayingBoardError();
     }
 }
