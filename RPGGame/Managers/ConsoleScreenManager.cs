@@ -4,6 +4,7 @@ using RPGGame.Infrastructure.Enums;
 using RPGGame.Infrastructure.Exceptions;
 using RPGGame.Infrastructure.Models;
 using RPGGame.Infrastructure.Structs;
+using RPGGame.Managers;
 
 namespace RPGGame
 {
@@ -20,7 +21,7 @@ namespace RPGGame
         {
             this._playerService = playerService;
         }
-        public async void ShowCharacterSelect()
+        public void ShowCharacterSelect()
         {
             Console.Clear();
 
@@ -56,7 +57,7 @@ namespace RPGGame
 
                 Program.player?.Setup();
 
-                await _playerService.SavePlayerToDatabaseAsync();
+                _playerService.SavePlayerToDatabase();
 
                 Program.currentScreen = Screen.InGame;
             }
@@ -64,7 +65,7 @@ namespace RPGGame
             {
                 Program.player?.Setup();
 
-                await _playerService.SavePlayerToDatabaseAsync();
+                _playerService.SavePlayerToDatabase();
 
                 Program.currentScreen = Screen.InGame;
 
@@ -400,7 +401,11 @@ namespace RPGGame
                 }
             }
 
-            MoveMonsters(monstersDamagedPlayerCoordinates);
+            var monsterManager = new MonsterManager(this);
+
+            monsterManager.MoveMonsters(monstersDamagedPlayerCoordinates, monsterCoordinates, ref playerPositionRow, ref playerPositionCol, gamingBoard);
+
+            //MoveMonsters(monstersDamagedPlayerCoordinates, monsterCoordinates, playerPositionRow, playerPositionCol);
         }
 
         private void OutsidePlayingBoardError()
@@ -576,112 +581,6 @@ namespace RPGGame
             }
 
 
-        }
-
-        private void MoveMonster(MonsterCoordinates currentMonsterCoordinates, string dimension, char operation)
-        {
-            if (dimension == "Row")
-            {
-                if (operation == '+')
-                {
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
-
-                    currentMonsterCoordinates.Row += 1;
-
-                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
-
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
-
-                }
-                else if (operation == '-')
-                {
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
-
-                    currentMonsterCoordinates.Row -= 1;
-
-                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
-
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
-                }
-            }
-            else if (dimension == "Column")
-            {
-                if (operation == '+')
-                {
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
-
-                    currentMonsterCoordinates.Column += 1;
-
-                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
-
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
-
-                }
-                else if (operation == '-')
-                {
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '▒';
-
-                    monsterCoordinates.TryGetValue(currentMonsterCoordinates, out Monster monster);
-
-                    monsterCoordinates.Remove(currentMonsterCoordinates);
-
-                    currentMonsterCoordinates.Column -= 1;
-
-                    monsterCoordinates.TryAdd(currentMonsterCoordinates, monster!);
-
-                    gamingBoard![currentMonsterCoordinates.Row, currentMonsterCoordinates.Column] = '■';
-                }
-            }
-
-        }
-        private void MoveMonsters(IList<MonsterCoordinates> monstersDamagedPlayerCoordinates)
-        {
-            var movingMonsters = monsterCoordinates.Keys
-                .Where(m => monstersDamagedPlayerCoordinates.Any(mc => mc.Equals(m)) == false)
-                .ToList();
-
-            MonsterCoordinates currentMonsterCoordinates;
-
-            for (int i = 0; i < movingMonsters.Count; i++)
-            {
-                currentMonsterCoordinates = movingMonsters[i];
-
-                if (currentMonsterCoordinates.Row != playerPositionRow)
-                {
-                    if (currentMonsterCoordinates.Row < playerPositionRow)
-                    {
-                        MoveMonster(currentMonsterCoordinates, "Row", '+');
-
-                    }
-                    else if (currentMonsterCoordinates.Row > playerPositionRow)
-                    {
-                        MoveMonster(currentMonsterCoordinates, "Row", '-');
-                    }
-                }
-                else if (currentMonsterCoordinates.Column != playerPositionCol)
-                {
-                    if (currentMonsterCoordinates.Column < playerPositionCol)
-                    {
-                        MoveMonster(currentMonsterCoordinates, "Column", '+');
-                    }
-                    else if (currentMonsterCoordinates.Column > playerPositionCol)
-                    {
-                        MoveMonster(currentMonsterCoordinates, "Column", '-');
-                    }
-                }
-            }
         }
 
     }
