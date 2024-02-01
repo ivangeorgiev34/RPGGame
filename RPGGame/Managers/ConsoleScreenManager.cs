@@ -242,8 +242,6 @@ namespace RPGGame
             var monsterManager = new MonsterManager(this);
 
             monsterManager.MoveMonsters(monstersDamagedPlayerCoordinates, monsterCoordinates, ref playerPositionRow, ref playerPositionCol, gamingBoard);
-
-            //MoveMonsters(monstersDamagedPlayerCoordinates, monsterCoordinates, playerPositionRow, playerPositionCol);
         }
 
         public void OutsidePlayingBoardError()
