@@ -19,6 +19,7 @@ namespace RPGGame.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
+                //couldnt retrieve the connection string from the user secrets file in the main project
                 optionsBuilder
                     .UseSqlServer("Server=DESKTOP-1FK883M\\SQLEXPRESS;Database=RPGGame;Trusted_Connection=True;");
             }
