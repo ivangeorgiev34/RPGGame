@@ -66,7 +66,7 @@ namespace RPGGame.Services
             }
         }
 
-        public async Task SavePlayerToDatabaseAsync()
+        public void SavePlayerToDatabase()
         {
             using (var dbContext = new RPGGameDbContext())
             {
@@ -90,9 +90,9 @@ namespace RPGGame.Services
 
                 dbContext.Players?.Add(player);
 
-                await dbContext.SaveChangesAsync();
+                dbContext.SaveChanges();
 
-                await dbContext.DisposeAsync();
+                dbContext.Dispose();
             }
         }
 
