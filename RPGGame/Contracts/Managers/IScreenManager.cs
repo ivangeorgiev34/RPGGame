@@ -9,5 +9,7 @@
         public void ShowInGame();
 
         public void ResetPlayerPosition();
+
+        public void ResetMonsters();
     }
 }
