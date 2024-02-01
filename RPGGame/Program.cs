@@ -26,7 +26,7 @@ namespace RPGGame
                     screenManager.ShowInGame();
                 }
                 catch (Exception ioe)
-                when (ioe is ArgumentException
+                    when (ioe is ArgumentException
                 || ioe is InvalidOperationException
                 || ioe is InvalidInputException)
                 {

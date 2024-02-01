@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using RPGGame.Infrastructure.Models;
 
 namespace RPGGame.Infrastructure.Data
@@ -19,9 +20,16 @@ namespace RPGGame.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //couldnt retrieve the connection string from the user secrets file in the main project
+                var applicationAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                    .FirstOrDefault(x => x.FullName!.Contains(nameof(RPGGame)));
+
+                var connectionString = new ConfigurationBuilder()
+                    .AddUserSecrets(applicationAssembly)
+                    .Build()
+                    .GetConnectionString("RPGGameConnectionString");
+
                 optionsBuilder
-                    .UseSqlServer("Server=DESKTOP-1FK883M\\SQLEXPRESS;Database=RPGGame;Trusted_Connection=True;");
+                    .UseSqlServer(connectionString);
             }
         }
     }
