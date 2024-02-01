@@ -1,5 +1,5 @@
 # RPGGame
-**RPGGame** is a simple console application built with C#, the game is about choosing your race and fighting monsters around the playing board.
+**RPGGame** is a simple console application built with **C#**, the game is about choosing your race and fighting monsters around the playing board.
 ## Table of contents
 - [How to play?](#how-to-play)
 - [Screenshots](#screenshots)
