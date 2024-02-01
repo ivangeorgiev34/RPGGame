@@ -13,5 +13,7 @@
         public void ResetMonsters();
 
         public void OutsidePlayingBoardError();
+
+        public void MonsterOnDesiredSpotError();
     }
 }
